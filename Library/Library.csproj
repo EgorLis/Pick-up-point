@@ -10,10 +10,22 @@
     <AssemblyName>EgorLis.PickUpPoint.Library</AssemblyName>
     <Product>EgorLis.PickUpPoint.Library</Product>
     <Description>Library for Pick-up-point service</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>EgorLis</Authors>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0-pre1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Grpc/Warehouse.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Grpc/Warehouse.proto" />
+  </ItemGroup>
 
 </Project>
