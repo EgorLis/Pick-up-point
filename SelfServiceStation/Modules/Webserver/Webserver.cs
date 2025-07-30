@@ -3,6 +3,7 @@ using EgorLis.PickUpPoint.SelfServiceStation.Modules.Webserver.Parts;
 using EgorLis.PickUpPoint.SelfServiceStation.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Net;
 
 namespace EgorLis.PickUpPoint.SelfServiceStation.Modules.Webserver;
@@ -46,6 +47,11 @@ public static class Webserver
 
     builder.Services
       .AddSingleton(warehouse);
+
+    builder.WebHost.ConfigureKestrel(_opt =>
+    {
+      _opt.Listen(IPAddress.Any, PortHttp);
+    });
 
     var app = builder.Build();
 
