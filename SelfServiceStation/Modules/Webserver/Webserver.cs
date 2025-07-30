@@ -2,6 +2,7 @@
 using EgorLis.PickUpPoint.SelfServiceStation.Modules.Webserver.Parts;
 using EgorLis.PickUpPoint.SelfServiceStation.Tools;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Constraints;
 using System.Net;
 
 namespace EgorLis.PickUpPoint.SelfServiceStation.Modules.Webserver;
@@ -18,6 +19,26 @@ public static class Webserver
       options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
     });
 
+    builder.Services.Configure<JsonOptions>(opts =>
+    opts.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default));
+
+    // Swagger/OpenAPI
+    builder.Services.AddEndpointsApiExplorer();   // <-- для minimal API
+    builder.Services.AddSwaggerGen(c =>
+    {
+      c.SwaggerDoc("v1", new()
+      {
+        Title = "Self-service station API",
+        Version = "v1"
+      });
+      // при необходимости: c.IncludeXmlComments(...);
+    });
+
+    // --- Вот это обязательно! Регистрируем regex-constraint ---
+    builder.Services.Configure<RouteOptions>(options =>
+    {
+      options.SetParameterPolicy<RegexInlineRouteConstraint>("regex");
+    });
 
     var warehouse = new WarehouseProvider(new Uri("http://localhost:5990"), TimeSpan.FromSeconds(5));
 
@@ -28,7 +49,17 @@ public static class Webserver
 
     var app = builder.Build();
 
-    var warehouseApi = app.MapGroup("/self-service-station");
+    // Swagger middleware 
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+      c.SwaggerEndpoint("/swagger/v1/swagger.json", "Self-service station API V1");
+      c.RoutePrefix = "swagger";  // https://localhost:5899/swagger
+    });
+
+    var warehouseApi = app.MapGroup("/self-service-station")
+                          .WithTags("Self-service station");
+
 
 
     // Использованием minimal api 
@@ -47,7 +78,9 @@ public static class Webserver
       {
         return Results.Problem(detail: ex.Message, statusCode: (int)HttpStatusCode.BadRequest);
       }
-    });
+    })
+      .WithName("GetCatalog")
+      .WithSummary("Возвращает весь каталог продуктов");
 
 
     warehouseApi.MapGet("/get-product", async
@@ -68,7 +101,9 @@ public static class Webserver
       {
         return Results.Problem(detail: ex.Message, statusCode: (int)HttpStatusCode.BadRequest);
       }
-    });
+    })
+      .WithName("GetProduct")
+      .WithSummary("Получаем нужный нам продукт");
 
     return app.RunAsync();
   }
