@@ -52,6 +52,9 @@ flowchart LR
 
 ## 🚀 Запуск проекта
 
+- Скачиваем релиз
+- Запускам Run.exe
+
 ---
 
 ## 📡 HTTP API (Minimal API + Swagger)
