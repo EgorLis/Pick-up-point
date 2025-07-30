@@ -1,6 +1,6 @@
-using EgorLis.PickUpPoint.Warehouse.Modules.Webserver;
+using EgorLis.PickUpPoint.SelfServiceStation.Modules.Webserver;
 
-namespace EgorLis.PickUpPoint.Warehouse;
+namespace EgorLis.PickUpPoint.SelfServiceStation;
 
 public class Program
 {

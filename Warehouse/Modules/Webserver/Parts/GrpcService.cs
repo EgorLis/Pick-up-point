@@ -1,4 +1,4 @@
-﻿using EgorLis.PickUpPoint.Warehouse.Modules.Catalog;
+﻿using EgorLis.PickUpPoint.Warehouse.Modules.AppCore;
 using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
 using EgorLis.PickUpPoint.Library.Grpc;
@@ -6,12 +6,12 @@ using EgorLis.PickUpPoint.Library.Grpc;
 namespace EgorLis.PickUpPoint.Warehouse.Modules.Webserver.Parts;
 public class GrpcService : Library.Grpc.Warehouse.WarehouseBase
 {
-  private AppCore AppCore { get; init; }
-  public GrpcService(AppCore _appCore)
+  private ApplicationCore AppCore { get; init; }
+  public GrpcService(ApplicationCore _appCore)
   {
     AppCore = _appCore;
 
-    Console.WriteLine("Grpc сервис иницилизирован");
+    Console.WriteLine($"[GrpcService]|{DateTime.Now:T}|Grpc сервис иницилизирован");
   }
 
   public override Task<Product> GetProduct(GetProductRequest _request, ServerCallContext _context)

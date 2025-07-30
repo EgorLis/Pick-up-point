@@ -1,0 +1,9 @@
+@SelfServiceStation_HostAddress = http://localhost:5899/self-service-station
+
+### Получить каталог товаров
+GET {{SelfServiceStation_HostAddress}}/get-catalog
+Accept: application/json
+
+### Получить товар со склада
+GET {{SelfServiceStation_HostAddress}}/get-product?id=1&count=2
+Accept: application/json

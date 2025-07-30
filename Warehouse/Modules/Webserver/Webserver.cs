@@ -1,5 +1,5 @@
 ﻿using EgorLis.PickUpPoint.Library.Grpc;
-using EgorLis.PickUpPoint.Warehouse.Modules.Catalog;
+using EgorLis.PickUpPoint.Warehouse.Modules.AppCore;
 using EgorLis.PickUpPoint.Warehouse.Modules.Webserver.Parts;
 using EgorLis.PickUpPoint.Warehouse.Tools;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -11,7 +11,7 @@ public static class Webserver
 {
   public static int PortGrpc { get; } = 5990;
   public static int PortHttp { get; } = 5999;
-  public static void Run()
+  public static Task RunAsync()
   {
     var builder = WebApplication.CreateSlimBuilder();
 
@@ -21,7 +21,7 @@ public static class Webserver
     });
 
 
-    var appCore = new AppCore();
+    var appCore = new ApplicationCore();
 
     // Регистрируем зависимости в DI 
 
@@ -76,6 +76,6 @@ public static class Webserver
 
     app.MapGrpcService<GrpcService>();
 
-    app.Run();
+    return app.RunAsync();
   }
 }

@@ -1,11 +1,11 @@
 ﻿using EgorLis.PickUpPoint.Library.Grpc;
 
-namespace EgorLis.PickUpPoint.Warehouse.Modules.Catalog;
+namespace EgorLis.PickUpPoint.Warehouse.Modules.AppCore;
 
-public class AppCore
+public class ApplicationCore
 {
   public Dictionary<int, Product> Products { get; private set; }
-  public AppCore()
+  public ApplicationCore()
   {
     // Иницилизируем коллекцию с изначальными значениями
 
@@ -16,12 +16,14 @@ public class AppCore
       { 2, new Product { Id = 2, Category = ProductCategory.ComputerParts, Name = "RTX 3060", Count = 15 } }
     };
 
-    Console.WriteLine($"Ядро сервиса иницилизированно");
+    Console.WriteLine($"[AppCore]|{DateTime.Now:T}| Ядро сервиса иницилизированно");
   }
 
   // Оборачиваем наши данные, для последующий передачи по Grpc
   public ProductCatalog GetCatalog()
   {
+    Console.WriteLine($"[AppCore]|{DateTime.Now:T}| Запрос на каталог");
+
     var catalog = new ProductCatalog();
     catalog.Products.AddRange(Products.Values);
 
@@ -35,11 +37,11 @@ public class AppCore
     if (!Products.TryGetValue(_request.ProductId, out var product))
       throw new KeyNotFoundException($"Данного товара id:{_request.ProductId} нет на складе");
 
-    Console.WriteLine($"Товар id:{_request.ProductId} найден");
+    Console.WriteLine($"[AppCore]|{DateTime.Now:T}| Товар id:{_request.ProductId} найден");
 
     if (_request.Count > product.Count)
     {
-      var str = $"В наличии нет столько товара id:{_request.ProductId}";
+      var str = $"[AppCore]|{DateTime.Now:T}|В наличии нет столько товара id:{_request.ProductId}";
       Console.WriteLine(str);
 
       throw new ArgumentOutOfRangeException(str);
@@ -58,18 +60,20 @@ public class AppCore
       product.Count -= _request.Count;
     }
 
-    return product;
+    return resultProduct;
   }
 
   // Добавление товаров на склад
   public void AddToWarehouse(Product _product)
   {
+    Console.WriteLine($"[AppCore]|{DateTime.Now:T}| Добавление товара id:{_product.Id}, name:{_product.Name}, category:{_product.Category}, count:{_product.Count}");
+
     if (Products.TryGetValue(_product.Id, out var product))
     {
       if (product.Name != _product.Name)
         throw new InvalidOperationException($"Товар не соответсвует уже существующему с таким id:{_product.Id} товару");
 
-      Console.WriteLine($"Найден аналогичный товар id:{_product.Id}, со схожими параметрами, просто суммируем значение");
+      Console.WriteLine($"[AppCore]|{DateTime.Now:T}| Найден аналогичный товар id:{_product.Id}, со схожими параметрами, просто суммируем значение");
 
       product.Count += _product.Count;
 
